@@ -4,14 +4,14 @@ session:
 db:
   default:
     type: mysql
-    host: string
+    host: 127.0.0.1
     port: 3306
-    user: 123
-    password: abc
+    user: root
+    password: 123456
     dbname: oauth2
 redis:
   default:
-    addr: 192.168.33.10:6379
+    addr: 127.0.0.1:6379
     password: 
     db: 0
 oauth2:

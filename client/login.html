@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <title>用户登录授权-OAuth2.0</title>
+    <style>
+        .login-form{
+            width: 500px;
+            margin: 0 auto;
+        }
+        h1{
+            font-size: 30px;
+            font-weight: 700;
+            word-break: break-word;
+            color: #404040;
+            text-rendering: optimizelegibility;
+            font-family: cursive;
+        }
+        .login-bottom {
+            height: 50px;
+            text-align: center;
+            margin-top: 560px;
+            font-size: 12px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="login-content" style="text-align: center;margin-top: 50px;">
+        <div class="login-logo">
+            <h1>sso单点登录</h1>
+        </div>
+        <div class="login-form">
+            <form action="/login" method="POST">
+                <input type="hidden" name="type" value="password">
+                <div class="form-group">
+                    <label class="sr-only" for="username">用户名</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroupPrepend2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+                        </div>
+                        <input type="text" class="form-control" id="username" name="username" aria-describedby="inputGroupPrepend2" required="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only" for="password">密码</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroupPrepend3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
+                        </div>
+                        <input type="password" class="form-control" id="password" name="password" aria-describedby="inputGroupPrepend3" required="">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">登录</button>
+            </form>
+        </div>
+    </div>
+    <div class="login-bottom" >
+        <span>CopyRight © 2021-<span id="endYear">2021</span> <b>{{.name}}</b> &nbsp;Design by Lei</span>
+    </div>
+</div>
+</body>
+</html>

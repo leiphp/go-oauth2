@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-oauth2/oauth2/v4/generates"
 	"html/template"
@@ -9,8 +10,11 @@ import (
 	"net/http"
 	"net/url"
 	"oauth2/config"
+	"oauth2/configs"
+	"oauth2/initialize"
 	"oauth2/model"
 	"oauth2/pkg/session"
+	"strings"
 	"time"
 
 	"github.com/go-oauth2/oauth2/v4/errors"
@@ -19,16 +23,22 @@ import (
 	"github.com/go-oauth2/oauth2/v4/server"
 	"github.com/go-oauth2/oauth2/v4/store"
 )
+/*
+	认证中心服务
+*/
 
 var srv *server.Server
 var mgr *manage.Manager
 
 func main() {
+	//获得配置对象
+	Yaml := configs.InitConfig()
+	initialize.Init(Yaml)
 	//time.Sleep(30 * time.Second)
 	config.Setup()
 	// init db connection
 	// configure db in app.yaml then uncomment
-	// model.Setup()
+	model.Setup()
 	session.Setup()
 
 	// manager config
@@ -243,6 +253,22 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	//清除出redirect_uri其他的session
+	comma1 := strings.Index(redirectURI, "=")
+	comma2 := strings.Index(redirectURI, "&")
+	clientId := redirectURI[comma1+1 : comma2]
+	fmt.Println("client_id:",clientId)
+	for _, v := range config.Get().OAuth2.Client {
+		fmt.Println("v:",v)
+		if v.ID != clientId {
+			_, err := http.Get(v.Domain + "/sso/refreshToken") //统一刷新token
+			fmt.Println("err:",err)
+			if err != nil {
+				fmt.Errorf("err:",err)
+				continue
+			}
+		}
+	}
 
 	w.Header().Set("Location", redirectURI)
 	w.WriteHeader(http.StatusFound)
@@ -277,46 +303,5 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 	e := json.NewEncoder(w)
 	e.SetIndent("", "  ")
 	e.Encode(data)
-}
-
-func main2() {
-	manager := manage.NewDefaultManager()
-	// token memory store
-	manager.MustTokenStorage(store.NewMemoryTokenStore())
-
-	// client memory store
-	clientStore := store.NewClientStore()
-	clientStore.Set("000000", &models.Client{
-		ID:     "000000",
-		Secret: "999999",
-		Domain: "http://localhost",
-	})
-	manager.MapClientStorage(clientStore)
-
-	srv := server.NewDefaultServer(manager)
-	srv.SetAllowGetAccessRequest(true)
-	srv.SetClientInfoHandler(server.ClientFormHandler)
-
-	srv.SetInternalErrorHandler(func(err error) (re *errors.Response) {
-		log.Println("Internal Error:", err.Error())
-		return
-	})
-
-	srv.SetResponseErrorHandler(func(re *errors.Response) {
-		log.Println("Response Error:", re.Error.Error())
-	})
-
-	http.HandleFunc("/authorize", func(w http.ResponseWriter, r *http.Request) {
-		err := srv.HandleAuthorizeRequest(w, r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-		}
-	})
-
-	http.HandleFunc("/token", func(w http.ResponseWriter, r *http.Request) {
-		srv.HandleTokenRequest(w, r)
-	})
-
-	log.Fatal(http.ListenAndServe(":9096", nil))
 }
 

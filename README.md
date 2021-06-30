@@ -325,3 +325,11 @@ var (
   DefaultRefreshTokenCfg = &RefreshingConfig{IsGenerateRefresh: true, IsRemoveAccess: true, IsRemoveRefreshing: true}
 )
 ```
+
+
+## 9 F&Q
+* 统一退出  
+退出就是清空用于与SSO客户端建立的所有的会话，简单的来说就是使所有端点的Session失效，如果想做得更好的话可以令Token失效，但是由于我们用的JWT，故而撤销Token就不是那么容易，关于这一点，在官网上也有提到：
+* 解决思路  
+思路一：每次业务端api请求，把从cookie获取的session发送sso认证服务验证token，而之前每次业务客户端登录时我们都把token放到redis，做redis session共享。而我们统一退出登出，只需要把共享的token通过refresh_token刷新，从而达到当时登录的token失效，等下次api token验证时自然验证失败，重定向到统一登录页，从而达到统一退出效果。  
+思路二：业务客户端退出时，先调统一退出接口，再在统一退出逻辑里面循环调客户端提前提供的session失效接口，这也能达到统一退出效果  

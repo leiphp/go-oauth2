@@ -1,0 +1,14 @@
+##Mysql配置
+Mysql:
+  Host: "127.0.0.1"
+  User: "root"
+  Password: "123456"
+  Port: "3306"
+  DataBase: "oauth2"
+
+##Redis配置
+Redis:
+  default:
+    addr: 127.0.0.1:6379
+    password:
+    db: 0
