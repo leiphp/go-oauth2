@@ -164,7 +164,10 @@ func submit2(c *gin.Context) {
 
 //主页
 func admin2(c *gin.Context) {
-	c.HTML(http.StatusOK, "admin.html", gin.H{"title": "首页-雷小天社区", "address": "www.100txy.com"})
+	// 取值
+	req, _ := c.Get("request")
+	fmt.Println("request:", req)//userId
+	c.HTML(http.StatusOK, "admin.html", gin.H{"title": "client2认证后台首页", "address": "www.100txy.com","user_id":req})
 }
 
 //退出
@@ -182,6 +185,8 @@ func logout2(c *gin.Context) {
 	// 将session的最大存储时间设置为小于零的数即为删除
 	session.Options.MaxAge = -1
 	session.Save(r, w)
+	//清除redis共享session
+	initialize.RedisClient.Del("test_client_2")
 	//c.Redirect(302, "/home")
 	c.Redirect(302, "http://localhost:9096/logout?redirect_uri=http%3a%2f%2flocalhost%3a9096%2fauthorize%3fclient_id%3dtest_client_2%26response_type%3dcode%26scope%3dall%26state%3dxyz%26redirect_uri%3dhttp%3a%2f%2flocalhost%3a9094%2flogin")
 }
