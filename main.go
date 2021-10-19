@@ -167,6 +167,7 @@ type TplData struct {
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	form, err := session.Get(r, "RequestForm")
+	fmt.Println("form:",form)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

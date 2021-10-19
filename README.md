@@ -2,6 +2,10 @@
 go实现oauth2授权方案  
 1. OAuth2.0 Server: based on go-oauth2  
 2. SSO Server: based on the OAuth2 service
+3. 域名配置  
+127.0.0.1 ssoserver.com  
+127.0.0.1 client1.com  
+127.0.0.1 client2.com  
 
 ## 演示授权码(authorization_code)流程 & 单点登录(SSO)
 

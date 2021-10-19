@@ -58,10 +58,10 @@ func login2(c *gin.Context) {
 		val := url.Values{}
 		val.Add("grant_type", "client_credentials")
 		val.Add("scope","all") // Set Add 都可以
-		val.Add("redirect_uri", "http://localhost:9094/home")
+		val.Add("redirect_uri", "http://client2.com:9094/home")
 
 		body := strings.NewReader(val.Encode())
-		req, err := http.NewRequest(http.MethodPost, "http://localhost:9096/token", body)
+		req, err := http.NewRequest(http.MethodPost, "http://ssoserver.com:9096/token", body)
 		//req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 		req.Header.Set("Content-Type","application/x-www-form-urlencoded")
 		//req.BasicAuth()
@@ -112,10 +112,10 @@ func login2(c *gin.Context) {
 		val.Add("grant_type", "authorization_code")
 		val.Add("code", code) // Set Add 都可以
 		val.Add("scope", "all") // Set Add 都可以
-		val.Add("redirect_uri", "http://localhost:9094/login")
+		val.Add("redirect_uri", "http://client2.com:9094/login")
 
 		body := strings.NewReader(val.Encode())
-		req, err := http.NewRequest(http.MethodPost, "http://localhost:9096/token", body)
+		req, err := http.NewRequest(http.MethodPost, "http://ssoserver.com:9096/token", body)
 		//req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 		req.Header.Set("Content-Type","application/x-www-form-urlencoded")
 		//req.BasicAuth()
@@ -188,7 +188,7 @@ func logout2(c *gin.Context) {
 	//清除redis共享session
 	initialize.RedisClient.Del("test_client_2")
 	//c.Redirect(302, "/home")
-	c.Redirect(302, "http://localhost:9096/logout?redirect_uri=http%3a%2f%2flocalhost%3a9096%2fauthorize%3fclient_id%3dtest_client_2%26response_type%3dcode%26scope%3dall%26state%3dxyz%26redirect_uri%3dhttp%3a%2f%2flocalhost%3a9094%2flogin")
+	c.Redirect(302, "http://ssoserver.com:9096/logout?redirect_uri=http%3a%2f%2fssoserver.com%3a9096%2fauthorize%3fclient_id%3dtest_client_2%26response_type%3dcode%26scope%3dall%26state%3dxyz%26redirect_uri%3dhttp%3a%2f%2fclient2.com%3a9094%2flogin")
 }
 
 
@@ -225,7 +225,7 @@ func TokenMiddleWare2() gin.HandlerFunc {
 			tokenMap := checkToken2(c, token.(string))
 			fmt.Println("tokenMap", tokenMap)
 		}else {
-			c.Redirect(302, "http://localhost:9096/authorize?client_id=test_client_2&response_type=code&scope=all&state=xyz&redirect_uri=http://localhost:9094/login")
+			c.Redirect(302, "http://ssoserver.com:9096/authorize?client_id=test_client_2&response_type=code&scope=all&state=xyz&redirect_uri=http://client2.com:9094/login")
 		}
 	}
 }
@@ -233,7 +233,7 @@ func TokenMiddleWare2() gin.HandlerFunc {
 
 //效验sso分发的access_token有效性
 func checkToken2(c *gin.Context, oauth_token string) interface{} {
-	req, err := http.NewRequest(http.MethodGet, "http://localhost:9096/test", nil)
+	req, err := http.NewRequest(http.MethodGet, "http://ssoserver.com:9096/test", nil)
 	//req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Content-Type","application/x-www-form-urlencoded")
 	//req.BasicAuth()
@@ -269,7 +269,7 @@ func checkToken2(c *gin.Context, oauth_token string) interface{} {
 		session.Options.MaxAge = -1
 		session.Save(r, w)
 		fmt.Println("checkToken2 token:",token)
-		c.Redirect(302,"http://localhost:9096/logout?redirect_uri=http%3a%2f%2flocalhost%3a9096%2fauthorize%3fclient_id%3dtest_client_2%26response_type%3dcode%26scope%3dall%26state%3dxyz%26redirect_uri%3dhttp%3a%2f%2flocalhost%3a9094%2flogin")
+		c.Redirect(302,"http://ssoserver.com:9096/logout?redirect_uri=http%3a%2f%2fssoserver.com%3a9096%2fauthorize%3fclient_id%3dtest_client_2%26response_type%3dcode%26scope%3dall%26state%3dxyz%26redirect_uri%3dhttp%3a%2f%2fclient2.com%3a9094%2flogin")
 		//logout2(c)
 	}
 	fmt.Println("map:", m)//map: map[client_id:test_client_3 domain:http://localhost:8080 expires_in:7199 scope:all user_id:admin]
@@ -299,7 +299,7 @@ func refreshToken2(c *gin.Context) {
 	val.Add("refresh_token", refresh_token.(string))
 
 	body := strings.NewReader(val.Encode())
-	req, err := http.NewRequest(http.MethodPost, "http://localhost:9096/token", body)
+	req, err := http.NewRequest(http.MethodPost, "http://ssoserver.com:9096/token", body)
 	//req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Content-Type","application/x-www-form-urlencoded")
 	//req.BasicAuth()

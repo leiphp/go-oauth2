@@ -19,7 +19,7 @@ oauth2:
     - id: test_client_1
       secret: test_secret_1
       name: 测试应用1 
-      domain: http://localhost:9093
+      domain: http://client1.com:9093
       scope:
         - id: all
           title: 用户账号, 手机, 权限, 角色等信息
@@ -27,7 +27,7 @@ oauth2:
     - id: test_client_2
       secret: test_secret_2
       name: 测试应用2 
-      domain: http://localhost:9094
+      domain: http://client2.com:9094
       scope:
         - id: all
           title: 用户账号, 手机, 权限, 角色等信息
